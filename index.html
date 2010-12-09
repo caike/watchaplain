@@ -1,0 +1,52 @@
+<style>
+body {
+  min-width:357px;
+  overflow-x:hidden;
+}
+
+img {
+  margin:5px;
+  border:2px solid black;
+  vertical-align:middle;
+  width:75px;
+  height:75px;
+}
+</style>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js" type="text/javascript"></script>
+
+<script>
+
+$(function(){
+
+  userName  =  'username';
+
+  var apiKey          =  'apikey',
+      recentTracksUrl =   'http://ws.audioscrobbler.com/2.0/?';
+
+      $.get(recentTracksUrl, {
+        format: 'json',
+        method: 'user.getrecenttracks',
+        user: userName,
+        api_key: apiKey,
+      }, showCurrentTrack);
+
+})
+
+function showCurrentTrack(response) {
+
+  var recentTracks    = response.recenttracks,
+      currentTrack    = recentTracks.track[0],
+      currentArtist   = currentTrack.artist["#text"],
+      currentSong     = currentTrack["name"];
+
+  $('#user').html(userName + " is listening to:");
+  $('#song').html("<strong>" + currentSong + "</strong>");
+  $('#artist').html("by " + currentArtist);
+}
+
+</script>
+
+<p id="user"></p>
+<p id="song"></p>
+<p id="artist"></p>
