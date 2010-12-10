@@ -16,9 +16,13 @@ img {
   width:75px;
   height:75px;
 }
-#songList {
+ul#songList {
   font-weight: bold;
   color: #FFF;
+}
+
+ul#songList li {
+  margin-top: 10px;
 }
 </style>
 
@@ -34,16 +38,20 @@ $(function(){
       recentTracksUrl =   'http://ws.audioscrobbler.com/2.0/?';
 
       for(i=0; i < userNames.length; i++){
-        $.get(recentTracksUrl, {
-          format: 'json',
-          method: 'user.getrecenttracks',
-          user: userNames[i],
-          api_key: apiKey,
-        }, showCurrentTrack);
+        (function(inner_i){
+          $.get(recentTracksUrl, {
+            format: 'json',
+            method: 'user.getrecenttracks',
+            user: userNames[inner_i],
+            api_key: apiKey,
+            }, function(response){
+            showCurrentTrack(userNames[inner_i], response);
+          });
+        })(i);
       }
 })
 
-function showCurrentTrack(response) {
+function showCurrentTrack(index, response) {
 
   // helps a lot for debugging
   dresponse = response;
@@ -51,13 +59,14 @@ function showCurrentTrack(response) {
   var recentTracks    = response.recenttracks,
       currentTrack    = recentTracks.track[0],
       currentArtist   = currentTrack.artist["#text"],
-      currentSong     = currentTrack["name"];
+      currentSong     = currentTrack["name"],
+      userName = index;
 
   //$('#user').html(userName + " is listening to:");
   //$('#song').html("<strong>" + currentSong + "</strong>");
  // $('#artist').html("by " + currentArtist);
 
- $('#songList').append("<li><em>" + currentSong + "</em> by " + currentArtist + "</li>");
+ $('#songList').append("<li><em>" + currentSong + "</em> by " + currentArtist + "</li> (" + userName + ")");
 }
 
 </script>
