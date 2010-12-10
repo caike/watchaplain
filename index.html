@@ -2,6 +2,11 @@
 body {
   min-width:357px;
   overflow-x:hidden;
+  background: #4E78A0;
+  color: white;
+}
+h2{
+  font-weight: bold;
 }
 
 img {
@@ -11,6 +16,10 @@ img {
   width:75px;
   height:75px;
 }
+#songList {
+  font-weight: bold;
+  color: #FFF;
+}
 </style>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js" type="text/javascript"></script>
@@ -19,33 +28,44 @@ img {
 
 $(function(){
 
-  userName  =  'username';
+  userNames  =  ['caike', 'envylabs'];
 
-  var apiKey          =  'apikey',
+  var apiKey          =  'change-me',
       recentTracksUrl =   'http://ws.audioscrobbler.com/2.0/?';
 
-      $.get(recentTracksUrl, {
-        format: 'json',
-        method: 'user.getrecenttracks',
-        user: userName,
-        api_key: apiKey,
-      }, showCurrentTrack);
-
+      for(i=0; i < userNames.length; i++){
+        $.get(recentTracksUrl, {
+          format: 'json',
+          method: 'user.getrecenttracks',
+          user: userNames[i],
+          api_key: apiKey,
+        }, showCurrentTrack);
+      }
 })
 
 function showCurrentTrack(response) {
+
+  // helps a lot for debugging
+  dresponse = response;
 
   var recentTracks    = response.recenttracks,
       currentTrack    = recentTracks.track[0],
       currentArtist   = currentTrack.artist["#text"],
       currentSong     = currentTrack["name"];
 
-  $('#user').html(userName + " is listening to:");
-  $('#song').html("<strong>" + currentSong + "</strong>");
-  $('#artist').html("by " + currentArtist);
+  //$('#user').html(userName + " is listening to:");
+  //$('#song').html("<strong>" + currentSong + "</strong>");
+ // $('#artist').html("by " + currentArtist);
+
+ $('#songList').append("<li><em>" + currentSong + "</em> by " + currentArtist + "</li>");
 }
 
 </script>
+
+<h2>Wathemplain ?</h3>
+
+<ul id="songList">
+</li>
 
 <p id="user"></p>
 <p id="song"></p>
