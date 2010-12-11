@@ -8,6 +8,7 @@
     "popup": "index.html"
   },
   "permissions": [
+    "https://envylabs.campfirenow.com/room/",
     "http://ws.audioscrobbler.com/"
   ]
 }

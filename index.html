@@ -32,10 +32,13 @@ ul#songList li {
 
 $(function(){
 
-  userNames  =  ['caike', 'envylabs'];
+  userNames  =  ['envylabs', 'caike'];
 
-  var apiKey          =  'change-me',
-      recentTracksUrl =   'http://ws.audioscrobbler.com/2.0/?';
+  var lastFmApiKey = 'change-me',
+      recentTracksUrl = 'http://ws.audioscrobbler.com/2.0/?',
+      campFireKey = 'change-me',
+      roomId = 'change-me',
+      campfireLatestImagesUrl = 'https://envylabs.campfirenow.com/room/' + roomId + '/uploads.json';
 
       for(i=0; i < userNames.length; i++){
         (function(inner_i){
@@ -43,39 +46,60 @@ $(function(){
             format: 'json',
             method: 'user.getrecenttracks',
             user: userNames[inner_i],
-            api_key: apiKey,
+            api_key: lastFmApiKey,
             }, function(response){
-            showCurrentTrack(userNames[inner_i], response);
-          });
+              showCurrentTrack(userNames[inner_i], response);
+            });
         })(i);
       }
-})
 
-function showCurrentTrack(index, response) {
+     $.ajax({
+        url: campfireLatestImagesUrl,
+        username: campFireKey,
+        password: 'x',
+        success: function(response){
+          showLatestImages(response);
+        }
+      });
+
+});
+
+function showLatestImages(latestImages){
+  ddresponse = latestImages;
+
+  for(var i=0; i < 5; i++){
+    var image = '<img src="' +latestImages.uploads[i].full_url + '" />';
+
+    $('#imageList').append('<img src="' +latestImages.uploads[i].full_url + '" />');
+  }
+}
+function showCurrentTrack(user, response) {
 
   // helps a lot for debugging
   dresponse = response;
 
-  var recentTracks    = response.recenttracks,
-      currentTrack    = recentTracks.track[0],
-      currentArtist   = currentTrack.artist["#text"],
-      currentSong     = currentTrack["name"],
-      userName = index;
+  var recentTracks = response.recenttracks,
+      currentTrack = recentTracks.track[0],
+      currentArtist = currentTrack.artist["#text"],
+      currentSong = currentTrack["name"];
 
-  //$('#user').html(userName + " is listening to:");
-  //$('#song').html("<strong>" + currentSong + "</strong>");
- // $('#artist').html("by " + currentArtist);
 
- $('#songList').append("<li><em>" + currentSong + "</em> by " + currentArtist + "</li> (" + userName + ")");
+  for(var i = 0; i < 3; i++){
+    var track = recentTracks.track[i],
+        artist = track.artist["#text"],
+        song = track["name"];
+
+    $('#songList').append("<li><em>" + song + "</em> by " + artist + "</li> (" + user + ")");
+  }
+
 }
 
 </script>
 
-<h2>Wathemplain ?</h3>
+<h2>Last.Fm </h2>
 
-<ul id="songList">
-</li>
+<ul id="songList"></ul>
 
-<p id="user"></p>
-<p id="song"></p>
-<p id="artist"></p>
+<h2>Campfire</h2>
+
+<ul id="imageList"></ul>
